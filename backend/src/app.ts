@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express"
-
+import {prisma} from "./lib/prisma"
 const app = express();
 
 
@@ -12,8 +12,17 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // Basic route
-app.get("/", (req: Request, res: Response) => {
-  res.send("Hello, TypeScript + Express!");
+app.get("/", async(req: Request, res: Response) => {
+  const specialty = await prisma.specialty.create({
+    data: {
+      title: 'Cardiology'
+    }
+  })
+  res.status(201).json({
+    success: true,
+    message: "API is working",
+    data: specialty
+  })
 });
 
 
