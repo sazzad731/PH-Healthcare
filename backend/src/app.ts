@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express"
 import { IndexRoutes } from "./app/routes";
+import { globalErrorHandler } from "./middleware/globalErrorHandler";
 const app = express();
 
 
@@ -23,6 +24,9 @@ app.get("/", async(req: Request, res: Response) => {
     message: "API is working",
   })
 });
+
+
+app.use(globalErrorHandler);
 
 
 export default app
