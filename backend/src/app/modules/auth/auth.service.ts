@@ -1,5 +1,6 @@
 import { UserStatus } from "../../../generated/prisma/client";
 import { auth } from "../../../lib/auth";
+import { prisma } from "../../../lib/prisma";
 
 
 
@@ -25,12 +26,18 @@ const registerPatient = async (payload: IRegisterPatientPayload) => {
     throw new Error("Failed to register patient");
   }
 
-  // TODO: Create Patient Profile in Transaction After Sign up of Patient In User Model
-  // const patient = await prisma.$transaction(async (tx) => { 
-  //   await tx.pa
-  // })
+  // Create Patient Profile in Transaction After Sign up of Patient In User Model
+  const patient = await prisma.$transaction(async (tx) => { 
+    return await tx.patient.create({
+      data: {
+        userId: data.user.id,
+        name: payload.name,
+        email: payload.email,
+      }
+    })
+  })
   
-  return data
+  return {...data, patient}
 };
 
 
