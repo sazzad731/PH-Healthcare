@@ -6,7 +6,7 @@ import { envConfig } from "../config/env";
 import { status } from "http-status";
 import { z } from "zod";
 import { TErrorSources } from "../types";
-import { handleZodError } from "../errorHalpers/handleZodError";
+import { handleZodError } from "../errorHelpers/handleZodError";
 
 
 
@@ -17,19 +17,27 @@ export const globalErrorHandler = (err: any, req: Request, res: Response, next: 
 
   let errorSources: TErrorSources[] = [];
   let statusCode: number = status.INTERNAL_SERVER_ERROR;
-  let message: string = "Internal Server Error"
+  let message: string = "Internal Server Error";
+  let stack: string | undefined = undefined;
 
-  if (err instanceof z.ZodError) { 
+  if (err instanceof z.ZodError)
+  {
     const simplifiedError = handleZodError(err)
     statusCode = simplifiedError.statusCode;
     message = simplifiedError.message;
-    errorSources = [...simplifiedError.errorSources]
+    errorSources = [ ...simplifiedError.errorSources ];
+    stack = err.stack;
+  } else if (err instanceof Error){
+    statusCode = status.INTERNAL_SERVER_ERROR;
+    message = err.message;
+    stack = err.stack;
   }
 
   res.status(statusCode).json({
     success: false,
     message: message,
+    errorSources,
     error: envConfig.NODE_ENV === "development" ? err : undefined,
-    errorSources
+    stack: envConfig.NODE_ENV === "development" ? stack : undefined
   })
 }
