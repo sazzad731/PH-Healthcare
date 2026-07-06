@@ -7,6 +7,7 @@ import { status } from "http-status";
 import { z } from "zod";
 import { TErrorSources } from "../types";
 import { handleZodError } from "../errorHelpers/handleZodError";
+import AppError from "../errorHelpers/AppError";
 
 
 
@@ -27,10 +28,26 @@ export const globalErrorHandler = (err: any, req: Request, res: Response, next: 
     message = simplifiedError.message;
     errorSources = [ ...simplifiedError.errorSources ];
     stack = err.stack;
+  } else if (err instanceof AppError) { 
+    statusCode = err.statusCode;
+    message = err.message;
+    stack = err.stack;
+    errorSources = [
+      {
+        path: "",
+        message: err.message
+      }
+    ]
   } else if (err instanceof Error){
     statusCode = status.INTERNAL_SERVER_ERROR;
     message = err.message;
     stack = err.stack;
+    errorSources = [
+      {
+        path: "",
+        message: err.message,
+      },
+    ];
   }
 
   res.status(statusCode).json({

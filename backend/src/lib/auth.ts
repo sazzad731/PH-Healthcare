@@ -2,6 +2,8 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma";
 import { Role, UserStatus } from "../generated/prisma/client";
+import ms, { StringValue } from "ms";
+import { envConfig } from "../config/env";
 // If your Prisma file is located elsewhere, you can change the path
 
 
@@ -19,29 +21,38 @@ export const auth = betterAuth({
       role: {
         type: "string",
         required: true,
-        defaultValue: Role.PATIENT
+        defaultValue: Role.PATIENT,
       },
       status: {
         type: "string",
         required: true,
-        defaultValue: UserStatus.ACTIVE
+        defaultValue: UserStatus.ACTIVE,
       },
       needPasswordChange: {
         type: "boolean",
         required: true,
-        defaultValue: false
+        defaultValue: false,
       },
       isDeleted: {
         type: "boolean",
         required: true,
-        defaultValue: false
+        defaultValue: false,
       },
       deletedAt: {
         type: "date",
         required: true,
-        defaultValue: null
+        defaultValue: null,
       },
-    }
+    },
+  },
+
+  session: {
+    expiresIn: 60 * 60 * 60 * 24, // 1 day in seconds
+    updateAge: 60 * 60 * 60 * 24, // 1 day in seconds,
+    cookieCache: {
+      enabled: true,
+      maxAge: 60 * 60 * 60 * 24, // 1 day in seconds,
+    },
   },
 
   // trustedOrigins: [ process.env.BETTER_AUTH_URL || "http://localhost:5000" ],
