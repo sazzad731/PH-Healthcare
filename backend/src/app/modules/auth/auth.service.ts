@@ -1,9 +1,9 @@
 import { status } from "http-status";
-import AppError from "../../../errorHelpers/AppError";
-import { UserStatus } from "../../../generated/prisma/client";
-import { auth } from "../../../lib/auth";
-import { prisma } from "../../../lib/prisma";
-import { tokenUtils } from "../../../utils/token";
+import AppError from "../../errorHelpers/AppError";
+import { UserStatus } from "../../generated/prisma/client";
+import { auth } from "../../lib/auth";
+import { prisma } from "../../lib/prisma";
+import { tokenUtils } from "../../utils/token";
 
 
 

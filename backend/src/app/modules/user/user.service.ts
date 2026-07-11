@@ -1,8 +1,8 @@
 import { status } from "http-status";
-import AppError from "../../../errorHelpers/AppError";
-import { Role, Specialty } from "../../../generated/prisma/client";
-import { auth } from "../../../lib/auth";
-import { prisma } from "../../../lib/prisma";
+import AppError from "../../errorHelpers/AppError";
+import { Role, Specialty } from "../../generated/prisma/client";
+import { auth } from "../../lib/auth";
+import { prisma } from "../../lib/prisma";
 import { ICreateDoctorPayload } from "./user.Interface";
 
 const createDoctor = async (payload: ICreateDoctorPayload) => {

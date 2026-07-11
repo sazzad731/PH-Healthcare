@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { UserController } from "./user.controller";
-import { validateRequest } from "../../../middleware/validateRequest";
+import { validateRequest } from "../../middleware/validateRequest";
 import {createDoctorSchema} from "./user.validation";
 
 

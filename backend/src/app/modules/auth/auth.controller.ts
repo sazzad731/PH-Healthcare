@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
-import { catchAsync } from "../../../shared/catchAsync";
+import { catchAsync } from "../../shared/catchAsync";
 import { AuthService } from "./auth.service";
-import { sendResponse } from "../../../shared/sendResponse";
+import { sendResponse } from "../../shared/sendResponse";
 import { status } from "http-status";
-import { tokenUtils } from "../../../utils/token";
+import { tokenUtils } from "../../utils/token";
 
 const registerPatient = catchAsync(
   async (req: Request, res: Response) => { 
