@@ -1,7 +1,7 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma";
-import { Role, UserStatus } from "../generated/prisma/client";
+import { Role, UserStatus } from "../../generated/prisma/client";
 
 
 export const auth = betterAuth({
@@ -37,7 +37,7 @@ export const auth = betterAuth({
       },
       deletedAt: {
         type: "date",
-        required: true,
+        required: false,
         defaultValue: null,
       },
     },

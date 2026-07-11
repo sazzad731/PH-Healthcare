@@ -44,43 +44,71 @@ export const checkAuth = (...authRoles: Role[]) => async (req: Request, res: Res
           res.setHeader("X-Time-Remaining", timeRemaining.toString());
         }
 
-        if (user.status === UserStatus.BLOCKED || user.status === UserStatus.DELETED) {
-          throw new AppError(status.UNAUTHORIZED, "Unauthorized access: User is blocked or deleted");
+        if (
+          user.status === UserStatus.BLOCKED ||
+          user.status === UserStatus.DELETED
+        ) {
+          throw new AppError(
+            status.UNAUTHORIZED,
+            "Unauthorized access: User is blocked or deleted",
+          );
         }
 
         if (user.isDeleted) {
-          throw new AppError(status.UNAUTHORIZED, "Unauthorized access: User is deleted");
+          throw new AppError(
+            status.UNAUTHORIZED,
+            "Unauthorized access: User is deleted",
+          );
         }
-
 
         if (authRoles.length > 0 && !authRoles.includes(user.role)) {
-          throw new AppError(status.FORBIDDEN, "Forbidden access: You do not have permission to access this resource");
+          throw new AppError(
+            status.FORBIDDEN,
+            "Forbidden access: You do not have permission to access this resource",
+          );
         }
 
-        return next();
+        req.user = {
+          userId: user.id,
+          role: user.role,
+          email: user.email,
+        };
       }
+
+      // access token verification
+      const accessToken = cookieUtils.getCookie(req, "accessToken");
+
+      if (!accessToken) {
+        throw new AppError(
+          status.UNAUTHORIZED,
+          "Unauthorized access: No access token provided",
+        );
+      }
+
+      const verifyToken = jwtUtils.verifyToken(
+        accessToken,
+        envConfig.ACCESS_TOKEN_SECRET,
+      );
+
+      if (!verifyToken.success) {
+        throw new AppError(
+          status.UNAUTHORIZED,
+          "Unauthorized access: Invalid access token",
+        );
+      }
+
+      if (authRoles.length > 0 && !authRoles.includes(verifyToken.data!.role)) {
+        throw new AppError(
+          status.FORBIDDEN,
+          "Forbidden access: You do not have permission to access this resource",
+        );
+      }
+
+      next();
     }
 
 
-    // access token verification
-    const accessToken = cookieUtils.getCookie(req, "accessToken");
-
-    if (!accessToken) {
-      throw new AppError(status.UNAUTHORIZED, "Unauthorized access: No access token provided");
-    }
-
-    const verifyToken = jwtUtils.verifyToken(accessToken, envConfig.ACCESS_TOKEN_SECRET);
-
-
-    if (!verifyToken.success) {
-      throw new AppError(status.UNAUTHORIZED, "Unauthorized access: Invalid access token");
-    }
-
-    if (authRoles.length > 0 && !authRoles.includes(verifyToken.data!.role)) {
-      throw new AppError(status.FORBIDDEN, "Forbidden access: You do not have permission to access this resource");
-    }
-
-    next();
+    
   } catch (error) {
     next(error)
   }

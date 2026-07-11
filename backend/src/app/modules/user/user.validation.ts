@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Gender } from "../../generated/prisma/enums";
+import { Gender } from "../../../generated/prisma/enums";
 
 export const createDoctorSchema = z.object({
   password: z
